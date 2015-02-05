@@ -78,7 +78,8 @@ db.userdatas.find({"data.is_complete":true, "entityId":{$in:idsC}}).forEach(func
                                 {multi:true,upsert:true});
         });
     }
-    else if(activity && user){
+    // activity和task可能同时存在！
+    if(activity && user){
         var set = {
             user:user._id, rooms:user.rooms, schools:user.school,
             task:activity.task, topic:activity.topic, 
