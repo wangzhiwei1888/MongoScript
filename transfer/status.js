@@ -12,7 +12,7 @@ db.chapters.find({}).forEach(function(chapter){
             task.count = task.activities.length;
             task.activities = [];
             db.activities.find({_id:{$in:query}}).forEach(function(activity){
-                if(task.type=="basic" || task.type=="elementary"){
+                if(task.type=="advanced" || task.type=="elementary"){
                     activitiesC[activity._id.str] = {_id:activity._id, type:task.type,
                         chapter:chapter._id,topic:topic._id,task:task._id,count:task.count};
                     idsC.push(activity._id.str);
