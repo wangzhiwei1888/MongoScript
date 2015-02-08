@@ -116,6 +116,6 @@ db.userdatas.find({"data.is_complete":true, "entityId":{$in:idsC}}).forEach(func
 
 
 db.taskstatuses.dropIndexes();
-db.taskstatuses.ensureIndex( { user: 1, task: 1 } );
+db.taskstatuses.ensureIndex( { user: 1, task: 1 }, { background: true });
 db.activitystatuses.dropIndexes();
-db.activitystatuses.ensureIndex( { user: 1, activity: 1 } );
+db.activitystatuses.ensureIndex( { user: 1, activity: 1 }, { background: true });

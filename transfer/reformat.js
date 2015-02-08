@@ -45,6 +45,9 @@ db.rooms.find().forEach(function(room){
     room.users = room.users.concat(room.teachers);
     db.users.update({_id:{$in:room.users}},{$addToSet:{rooms:room._id}},{multi:true});
     delete room.teachers;
+    if(room.flag && (!room.index || room.index==0)){
+        room.index = db.users.find({"privacy.username":{$regex: '^' + room.flag, $options: 'i'}}).count();
+    }
     db.rooms.save(room);
 });
 
