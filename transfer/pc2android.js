@@ -38,7 +38,7 @@ db.publishers.findOne({}).chapters.forEach(function(chapterId){
                 act.seq = NumberInt(activities.length + 1);
                 
                 // video
-                var video = db.videos.findOne({_id:act.videos[0]},{url:1});
+                var video = db.videos.findOne({_id:{$in:act.videos},type:"main"},{url:1});
                 act.url = video.url;
                 act.videoId = video._id;
                 delete act.videos;
