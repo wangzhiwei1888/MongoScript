@@ -53,7 +53,7 @@ db.userdatas.find({"data.is_complete":true, "entityId":{$in:idsC}}).forEach(func
         print("user null" + userdata.userId);
     }
     if(task && user){
-        db.taskstatuses.update( {user:user._id,task:task._id,isPassed:true  },
+        db.taskstatuses.update( {user:user._id,task:task._id},
                                 {$set:{
                                     user:user._id, rooms:user.rooms, schools:user.school,
                                     task:task._id, topic:task.topic, chapter:task.chapter,
