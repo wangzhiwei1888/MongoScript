@@ -10,6 +10,6 @@ db.rooms.find({flag:{$exists:true}}).forEach(function(room){
     if(index != room.index && index > room.index) {
         print('room index:'+room.index+' shouldbe:' + index);
         room.index = index;
-        room.save();
+        db.rooms.save(room);
     }
 });
