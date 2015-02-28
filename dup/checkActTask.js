@@ -12,7 +12,7 @@ db.activitystatuses.aggregate(
                 $project: {
                     activities: 1,
                     count: { $size: "$activities"},
-                    isPassed : false;
+                    isPassed : false
                 }
             },
             {
