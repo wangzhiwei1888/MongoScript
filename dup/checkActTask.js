@@ -1,46 +1,55 @@
 db.checkActTask.drop();
-db.taskstatuses.copyTo("checkActTask");
 db.activitystatuses.aggregate(
-        [
-            {
-                $group: {
-                    _id: {user:"$user",task:"$task"},
-                    activities: {$addToSet: "$activity"}
-                }
-            },
-            {
-                $project: {
-                    activities: 1,
-                    count: { $size: "$activities"}
-                    //isPassed : false
-                }
-            },
-            {
-                $out: "checkActTask"
+    [
+        {
+            $group: {
+                _id: {user:"$user",task:"$task"},
+                activities: {$addToSet: "$activity"},
+                user: {$first:"$user"},
+                task: {$first:"$task"}
             }
-        ]
-    );
-db.checkActTask.update({}, {$set: {isPassed: false}}, {multi: true});
+        },
+        {
+            $project: {
+                activities: 1,
+                user: 1,
+                task: 1,
+                _id: 0
+            }
+        },
+        {
+            $out: "checkActTask"
+        }
+    ]
+);
+
+db.taskstatuses.find({}).forEach(function(taskStatus){
+    db.checkActTask.save({user:taskStatus.user,task:taskStatus.task,isPassed:taskStatus.isPassed});
+})
+
 db.tasks.find({}).forEach(function(task){
     db.checkActTask.update(
-        {'_id.task':task._id, activities:{$all:task.activities}},
-        {$set:{isPassed:true}}, 
+        {task:task._id, activities:{$all:task.activities}},
+        {$set:{isPassed:true}},
         {multi:true});
 });
+db.checkActTask.update(
+    {isPassed:{$exists:false}},
+    {$set:{isPassed:false}},
+    {multi:true});
 
 db.checkActTask.aggregate(
     [
         {
             $group: {
-                _id: {user:"$_id.user",task:"$_id.task"},
+                _id: {user:"$user",task:"$task"},
                 isPassed: {$addToSet: "$isPassed"},
-                num: {$sum: 1}
-                //activities: "$activities"
+                activities: {$addToSet: "$activities"}
             }
         },
         {
             $match: {
-                num: {$gt: 1}
+                isPassed: {$size:2}
             }
         }
     ]
