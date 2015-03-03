@@ -1,5 +1,4 @@
 db.checkActTask.drop();
-db.taskstatuses.copyTo("checkActTask");
 db.activitystatuses.aggregate(
         [
             { 
@@ -15,7 +14,7 @@ db.activitystatuses.aggregate(
                     activities: 1,
                     user: 1,
                     task: 1,
-                    isPassed : false
+                    _id: 0
                 }
             },
             {
@@ -24,12 +23,20 @@ db.activitystatuses.aggregate(
         ]
     );
 
+db.taskstatuses.find({}).forEach(function(taskStatus){
+    db.checkActTask.save({user:taskStatus.user,task:taskStatus.task,isPassed:taskStatus.isPassed});
+})
+
 db.tasks.find({}).forEach(function(task){
     db.checkActTask.update(
         {task:task._id, activities:{$all:task.activities}},
         {$set:{isPassed:true}}, 
         {multi:true});
 });
+db.checkActTask.update(
+    {isPassed:{$exists:false}},
+    {$set:{isPassed:false}},
+    {multi:true});
 
 db.checkActTask.aggregate(
     [
