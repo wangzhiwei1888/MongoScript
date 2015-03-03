@@ -2,7 +2,7 @@ db.checkActTask.drop();
 db.taskstatuses.copyTo("checkActTask");
 db.activitystatuses.aggregate(
         [
-            { 
+            {
                 $group: {
                     _id: {user:"$user",task:"$task"},
                     activities: {$addToSet: "$activity"}
@@ -11,8 +11,8 @@ db.activitystatuses.aggregate(
             {
                 $project: {
                     activities: 1,
-                    count: { $size: "$activities"},
-                    isPassed : false
+                    count: { $size: "$activities"}
+                    //isPassed : false
                 }
             },
             {
@@ -20,10 +20,10 @@ db.activitystatuses.aggregate(
             }
         ]
     );
-
+db.checkActTask.update({}, {$set: {isPassed: false}}, {multi: true});
 db.tasks.find({}).forEach(function(task){
     db.checkActTask.update(
-        {task:task._id, activities:{$all:task.activities}},
+        {'_id.task':task._id, activities:{$all:task.activities}},
         {$set:{isPassed:true}}, 
         {multi:true});
 });
@@ -32,14 +32,15 @@ db.checkActTask.aggregate(
     [
         {
             $group: {
-                _id: {user:"$user",task:"$task"},
+                _id: {user:"$_id.user",task:"$_id.task"},
                 isPassed: {$addToSet: "$isPassed"},
-                activities: "$activities"
+                num: {$sum: 1}
+                //activities: "$activities"
             }
         },
         {
             $match: {
-                isPassed: {$size:2}
+                num: {$gt: 1}
             }
         }
     ]
