@@ -5,13 +5,16 @@ db.activitystatuses.aggregate(
             { 
                 $group: {
                     _id: {user:"$user",task:"$task"},
-                    activities: {$addToSet: "$activity"}
+                    activities: {$addToSet: "$activity"},
+                    user: {$first:"$user"},
+                    task: {$first:"$task"}
                 }
             },
             {
                 $project: {
                     activities: 1,
-                    count: { $size: "$activities"},
+                    user: 1,
+                    task: 1,
                     isPassed : false
                 }
             },
@@ -34,7 +37,7 @@ db.checkActTask.aggregate(
             $group: {
                 _id: {user:"$user",task:"$task"},
                 isPassed: {$addToSet: "$isPassed"},
-                activities: "$activities"
+                activities: {$addToSet: "$activities"}
             }
         },
         {
