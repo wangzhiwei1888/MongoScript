@@ -1,0 +1,22 @@
+{
+  "name": "checkMongoScript",
+  "description": "check the wrong data in mongo",
+  "keywords": [
+    "mongo",
+    "node",
+    "script",
+    "check"
+  ],
+  "version": "0.0.1",
+  "private": false,
+  "author": "YshadowZ",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "dependencies": {
+    "mongoose": "^3.8.24",
+    "request": "^2.53.0",
+    "underscore": "^1.8.2"
+  }
+}

@@ -1,4 +1,5 @@
 db.checkActTask.drop();
+db.checkResult.drop();
 db.activitystatuses.aggregate(
     [
         {
@@ -41,16 +42,43 @@ db.checkActTask.update(
 db.checkActTask.aggregate(
     [
         {
+            $project: {
+                user: 1,
+                task: 1,
+                activities :1,
+                isPassed: 1,
+                mark: {$ifNull: ['$activities', 'fromTaskStatus']}
+            }
+        },
+        {
             $group: {
                 _id: {user:"$user",task:"$task"},
                 isPassed: {$addToSet: "$isPassed"},
-                activities: {$addToSet: "$activities"}
+                //activities: {$addToSet: "$activities"},
+                mark: {$addToSet: "$mark"}
             }
         },
         {
             $match: {
                 isPassed: {$size:2}
             }
+        },
+        {
+            $out: 'checkResult'
         }
     ]
-); 
+);
+db.checkResult.find({'mark.1': 'fromTaskStatus'}).forEach(function(res){
+    if(res.isPassed[1]){
+        db.taskstatuses.update({user: res._id.user, task: res._id.task}, {$set: {isPassed: false}});
+    } else{
+        db.taskstatuses.update({user: res._id.user, task: res._id.task}, {$set: {isPassed: true}});
+    }
+});
+db.checkResult.find({'mark.0': 'fromTaskStatus'}).forEach(function(res){
+    if(res.isPassed[0]){
+        db.taskstatuses.update({user: res._id.user, task: res._id.task}, {$set: {isPassed: false}});
+    } else{
+        db.taskstatuses.update({user: res._id.user, task: res._id.task}, {$set: {isPassed: true}});
+    }
+});

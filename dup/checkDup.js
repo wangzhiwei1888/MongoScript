@@ -27,8 +27,6 @@ function activity(){
         ]
     );
 
-    print(dup.result.length);
-
     dup.result.forEach(function(res){
 //    print(res._id.user + ' ' + res._id.activity + ' ' + res.createdAt);
 
@@ -60,8 +58,6 @@ function task(){
             }
         ]
     );
-
-    print(dup.result.length);
 
     dup.result.forEach(function(res){
 //    print(res._id.user + ' ' + res._id.task + ' ' + res.createdAt + ' ' + res.isPassed + ' ' + res.star);
